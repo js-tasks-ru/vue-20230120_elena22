@@ -32,40 +32,25 @@ const vm = createApp({
   data() {
     return {
       searchValue: '',
-      emails,
-      filteredEmails: []
+      emails
     };
   },
   computed: {
-    fullArr () {
-      return this.emails.forEach(el => {
-        this.filteredEmails.push({
-          email: el,
-          marked: false
-        })
-      });
+    filteredEmails() {
+      return this.emails.map((el) => ({
+        email: el,
+        marked: this.searcMarked(el),
+      }));
     }
   },
-  watch: {
-    searchValue () {
-      this.search()
-    }
-  },
-  methods: {
-    search () {
-      const searchFilter = (email) => [email]
-        .join(' ')
-        .toLowerCase()
-        .includes(this.searchValue.toLowerCase())
 
-      return this.filteredEmails.filter(el => {
-        if(searchFilter(el.email)) {
-          el.marked = true
-        } else {
-          el.marked = false
-        }
-      })
+  methods: {
+    searcMarked(email) {
+      if (this.searchValue) {
+        return email.toLowerCase().includes(this.searchValue.toLowerCase());
+      }
+      return false;
     }
-  }
+  },
 }).mount('#app');
 

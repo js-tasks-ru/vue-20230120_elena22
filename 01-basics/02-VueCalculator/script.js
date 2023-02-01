@@ -3,41 +3,29 @@ import { createApp } from './vendor/vue.esm-browser.js';
 const vm = createApp({
   data() {
     return {
-      output: 0,
       numberOne: null,
-      numberTwo: null
+      numberTwo: null,
+      operator: null
     };
   },
   computed: {
-    sum () {
-      return this.numberOne + this.numberTwo
-    },
-    subtract () {
-      return this.numberOne - this.numberTwo
-    },
-    multiply () {
-      return this.numberOne * this.numberTwo
-    },
-    divide () {
-      return this.numberOne / this.numberTwo
-    }
-  },
-  methods: {
-    calc (operator) {
-      switch (operator) {
+    output () {
+      let result = undefined
+      switch (this.operator) {
         case 'sum':
-          this.output = this.sum
-          break
+          result = this.numberOne + this.numberTwo
+          break;
         case 'subtract':
-          this.output = this.subtract
-          break
+          result = this.numberOne - this.numberTwo
+          break;
         case 'multiply':
-          this.output = this.multiply
-          break
+          result = this.numberOne * this.numberTwo
+          break;
         case 'divide':
-          this.output = this.divide
-          break
+          result = this.numberOne / this.numberTwo
+          break;
       }
-    }
-  }
+      return result;
+    },
+  },
 }).mount('#app');
