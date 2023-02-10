@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <select v-show="false" v-model="value" name="city" @change="$emit('update:modelValue', $event.target.value)">
+  <select v-show="false" :value="modelValue" @change="$emit('update:modelValue', $event.target.value)">
     <option v-for="option in options" :key="option.value" :value="option.value">
       {{ option.text }}
     </option>
@@ -53,30 +53,22 @@ export default {
   emits: ['update:modelValue'],
   data() {
     return {
-      value: null,
-      isOpened: false,
-      selectedIcon: null,
+      isOpened: false
     };
   },
   computed: {
     dropdownTitle() {
-      return this.modelValue ? this.options.find((option) => option.value === this.modelValue)?.text : this.title
+      return this.modelValue ? this.options.find((option) => option.value === this.modelValue)?.text : this.title;
     },
     hasIcons() {
       return this.options.some((option) => option.icon);
     },
-  },
-  watch: {
-    modelValue: {
-      handler(newValue) {
-        this.value = newValue;
-      },
-      immediate: true
-    },
+    selectedIcon() {
+      return this.modelValue ? this.options.find((el) => el.value === this.modelValue)?.icon : '';
+    }
   },
   methods: {
     selectOption(option) {
-      this.selectedIcon = option.icon;
       this.$emit('update:modelValue', option.value);
       this.isOpened = false;
     }

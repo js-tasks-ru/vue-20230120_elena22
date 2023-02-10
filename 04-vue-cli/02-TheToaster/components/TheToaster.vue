@@ -1,6 +1,12 @@
 <template>
   <div class="toasts">
-    <ui-toast v-for="toast in toasts" :key="toast.id" :toast="toast" @close="closeToats"/>
+    <ui-toast
+      v-for="toast in toasts"
+      :key="toast.id"
+      :message="toast.message"
+      :type="toast.type"
+      @close="closeToats(toast.id)"
+      />
   </div>
 </template>
 
@@ -15,26 +21,24 @@ export default {
   }),
   methods: {
     success(message) {
-      const id = message;
+      const id = Math.random();
       const timeOut = null
       this.toasts.push({
         id,
-        icon: 'check-circle',
-        class: 'toast_success',
         timeOut,
-        message
+        message,
+        type: 'success'
       })
       this.hideToast(id, timeOut)
     },
     error(message) {
-      const id = message;
+      const id = Math.random();
       const timeOut = null
       this.toasts.push({
         id,
-        icon: 'alert-circle',
-        class: 'toast_error',
         timeOut,
-        message
+        message,
+        type: 'error'
       })
       this.hideToast(id, timeOut)
     },
