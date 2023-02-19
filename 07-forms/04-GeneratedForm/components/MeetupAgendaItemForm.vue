@@ -1,31 +1,28 @@
 <template>
-  <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <fieldset class="agenda-item-form">
+    <button type="button" class="agenda-item-form__remove-button" @click="removeAgendaItem">
       <UiIcon icon="trash" />
     </button>
 
     <UiFormGroup>
-      <UiDropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <UiDropdown v-model="localAgendaItem.type" title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
     </UiFormGroup>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <UiFormGroup label="Начало">
-          <UiInput type="time" placeholder="00:00" name="startsAt" />
+          <UiInput v-model="localAgendaItem.startsAt" type="time" placeholder="00:00" name="startsAt" />
         </UiFormGroup>
       </div>
       <div class="agenda-item-form__col">
         <UiFormGroup label="Окончание">
-          <UiInput type="time" placeholder="00:00" name="endsAt" />
+          <UiInput v-model="localAgendaItem.endsAt" type="time" placeholder="00:00" name="endsAt" />
         </UiFormGroup>
       </div>
     </div>
 
-    <UiFormGroup label="Заголовок">
-      <UiInput name="title" />
-    </UiFormGroup>
-    <UiFormGroup label="Описание">
-      <UiInput multiline name="description" />
+    <UiFormGroup v-for="(field, fieldName) in fieldsAgendaItem" :key="fieldName" :label="field.label">
+      <component :is="field.component" v-model="localAgendaItem[fieldName]" v-bind="field.props" :name="fieldName" />
     </UiFormGroup>
   </fieldset>
 </template>
@@ -163,6 +160,39 @@ export default {
     agendaItem: {
       type: Object,
       required: true,
+    },
+  },
+  emits: ['update:agendaItem', 'remove'],
+  data() {
+    return {
+      localAgendaItem: { ...this.agendaItem },
+    };
+  },
+  computed: {
+    fieldsAgendaItem() {
+      return agendaItemFormSchemas[this.localAgendaItem.type];
+    },
+  },
+  watch: {
+    localAgendaItem: {
+      deep: true,
+      handler() {
+        this.$emit('update:agendaItem', { ...this.localAgendaItem });
+      },
+    },
+    'localAgendaItem.startsAt'(newVal, oldVal) {
+      const diff = this.getTimeInMs(this.localAgendaItem.endsAt) - this.getTimeInMs(oldVal);
+      const newEndsAtTime = this.getTimeInMs(newVal) + diff;
+      this.localAgendaItem.endsAt = new Date(newEndsAtTime).toISOString().substring(11, 16);
+    },
+  },
+  methods: {
+    removeAgendaItem() {
+      this.$emit('remove');
+    },
+    getTimeInMs(time) {
+      const [hours, minutes] = time.split(':');
+      return (parseInt(hours, 10) * 60 + parseInt(minutes, 10)) * 60 * 1000;
     },
   },
 };
