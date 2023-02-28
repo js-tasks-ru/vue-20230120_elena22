@@ -1,5 +1,13 @@
 <template>
-  <button class="button-group__button button-group__button_active" type="button" aria-selected="false">Button</button>
+  <button
+    class="button-group__button"
+    :class="{ 'button-group__button_active': isActive }"
+    type="button"
+    aria-selected="false"
+    @click="emitButtonValue"
+  >
+    <slot>Button</slot>
+  </button>
 </template>
 
 <script>
@@ -9,6 +17,27 @@ export default {
   props: {
     value: {
       required: true,
+    },
+  },
+
+  computed: {
+    isActive() {
+      return this.$parent.$props.modelValue === this.value;
+    },
+  },
+
+  mounted() {
+    if (this.$parent.$options.name !== 'UiButtonGroup') {
+      // eslint-disable-next-line no-console
+      console.warn(
+        'Компонент UiButtonGroupItem может быть использован только в качестве содержимого компонента UiButtonGroup',
+      );
+    }
+  },
+
+  methods: {
+    emitButtonValue() {
+      this.$parent.emitButtonValue(this.value);
     },
   },
 };
